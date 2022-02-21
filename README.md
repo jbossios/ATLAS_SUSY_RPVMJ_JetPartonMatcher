@@ -1,5 +1,5 @@
 
-# <div align='center'>JetParton matcher for ATLAS SUSY RPV Multijet analysis</div>
+# <div align='center'>JetParton matcher for the ATLAS SUSY RPV Multijet analysis</div>
 
 ## Dependencies
 
@@ -8,14 +8,14 @@
 
 ## How does it work?
 
-The ```RPVMatcher``` class matches jets to last quark in the gluino decay chain (and optionally FSRs).
+The ```RPVMatcher``` class matches jets to last quarks in the gluino decay chain (and optionally FSRs).
 
 ### Inputs:
 
 Three types of inputs are supported:
 
 - Jets: jets are provided as a list of ```RPVJet``` objects
-- Last quarks in gluino decay chain are provided as a list of ```RPVParton``` objects
+- Last quarks in the gluino decay chain are provided as a list of ```RPVParton``` objects
 - FSRs are provided as a list of ```RPVParton``` objects
 
 Inputs can be provided during initialization:
@@ -36,14 +36,14 @@ add_fsrs(self, fsrs: [RPVParton])
 
 The following properties can be set through the ```set_property()``` method:
 
-- 'ReturnOnlyMatched' (value type: ```bool```): set to ```True``` to return only matched jets (```False``` by default)
-- 'MatchingCriteria' (value type: ```str```): there are currently two options: 'UseFTDeltaRvalues' and 'RecomputeDeltaRvalues'
-- 'DeltaRcut' (value type: ```float```): maximum DeltaR value cut used for matching jets to partons (only used when ```'MatchingCriteria' == 'RecomputeDeltaRvalues'```)
-- 'Debug' (value type: ```bool```): enable debugging (higher verbosity)
+- ```"ReturnOnlyMatched"``` (value type: ```bool```): set to ```True``` to return only matched jets (```False``` by default)
+- ```"MatchingCriteria"``` (value type: ```str```): there are currently two options: ```'UseFTDeltaRvalues'``` and ```'RecomputeDeltaRvalues'``` (```RecomputeDeltaRvalues``` by default)
+- ```"DeltaRcut"``` (value type: ```float```): maximum DeltaR value cut used for matching jets to partons when ```'MatchingCriteria' == 'RecomputeDeltaRvalues'``` (```0.4``` by default)
+- ```"Debug"``` (value type: ```bool```): enable higher verbosity (```False``` by default)
 
 ### How to prepare jets?
 
-A ```list``` of ```RPVJet``` objects must be created. Each jet (instance of ```RPVJet```) must call ```SetPtEtaPhiE()``` to set thet jet's kinematics.
+A ```list``` of ```RPVJet``` objects must be created. Each jet (instance of ```RPVJet```) must call ```SetPtEtaPhiE()``` to set the jet's kinematics.
 
 In addition, if ```"MatchingCriteria"``` is set to ```"UseFTDeltaRvalues"``` the corresponding methods need to be called (```set_matched_parton_barcode()``` for partons and ```set_matched_fsr_barcode()``` for FSRs).
 
@@ -58,7 +58,6 @@ set_gluino_barcode()
 set_barcode()
 set_pdgid()
 ```
-
 ### How to prepare FSRs?
 
 A ```list``` of ```RPVParton``` objects must be created. Each FSR (instance of ```RPVParton```) must call ```SetPtEtaPhiE()``` to set the FSR's kinematics.
@@ -71,10 +70,9 @@ set_gluino_barcode()
 set_barcode()
 set_pdgid()
 ```
-
 ### How to run?
 
-Run the ```match()``` method of ```RPVMatcher``` which will retrieve decorated jets with all the relevant information.
+Run the ```match()``` method of ```RPVMatcher``` which will retrieve jets decorated with all the relevant information.
 
 The following methods can be called after jets are matched:
 
@@ -86,9 +84,7 @@ get_match_parton_index()
 get_match_pdgid()
 get_match_barcode()
 get_match_gluino_barcode()
-
 ```
-
 ## Example
 
 An example can be found in the repository as example.py
