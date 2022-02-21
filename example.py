@@ -1,6 +1,6 @@
-from ATLAS_SUSY_RPVMJ_JetPartonMatcher.rpv_matcher import RPVJet
-from ATLAS_SUSY_RPVMJ_JetPartonMatcher.rpv_matcher import RPVParton
-from ATLAS_SUSY_RPVMJ_JetPartonMatcher.rpv_matcher import RPVMatcher
+from rpv_matcher.rpv_matcher import RPVJet
+from rpv_matcher.rpv_matcher import RPVParton
+from rpv_matcher.rpv_matcher import RPVMatcher
 
 # Construct jets
 selected_jets = [RPVJet(), RPVJet(), RPVJet()]
