@@ -141,7 +141,7 @@ class RPVMatcher():
     jet.set_match_barcode(-1)
     jet.set_match_gluino_barcode(-1)
 
-  def __matcher_recompute_deltar_values(self, partons, is_fsr):
+  def __matcher_recompute_deltar_values(self, partons, is_fsr, dr_cut):
     """ Match jets to partons/FSRs re-computing DeltaR values """
     for jet_index, jet in enumerate(self.jets): # loop over jets
       if jet.is_matched(): continue # skip matched jet
@@ -156,7 +156,7 @@ class RPVMatcher():
         if dr < dr_min:
           dr_min = dr
           matched_parton_index = parton_index
-      if dr_min < self.properties['DeltaRcut']: # jet is matched
+      if dr_min < dr_cut: # jet is matched
         self.matched_partons.append(matched_parton_index)
         pdgid = partons[matched_parton_index].get_pdgid()
         barcode = partons[matched_parton_index].get_barcode()
@@ -212,8 +212,8 @@ class RPVMatcher():
   def __match_recompute_deltar_values(self) -> [RPVJet]:
     self.__log.debug('Jets will be matched to partons{} computing DeltaR values using a maximum DeltaR value of {}'.format(' and FSRs' if self.fsrs else '', self.properties['DeltaRcut']))
     self.__log.debug('Will return {} jets'.format('only matched' if self.properties['ReturnOnlyMatched'] else 'all'))
-    self.__matcher_recompute_deltar_values(self.partons, False)
-    if self.fsrs: self.__matcher_recompute_deltar_values(self.fsrs, True)
+    self.__matcher_recompute_deltar_values(self.partons, False, self.properties['DeltaRcut'])
+    if self.fsrs: self.__matcher_recompute_deltar_values(self.fsrs, True, self.properties['DeltaRcut'])
     self.__check_n_matched_jets()
     return self.__return_jets()
 
