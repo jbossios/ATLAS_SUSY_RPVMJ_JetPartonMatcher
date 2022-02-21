@@ -275,6 +275,9 @@ class RPVMatcher():
         self.__check_info(index, fsr, 'FSR')
 
   def match(self) -> [RPVJet]:
+    # clean up matching decisions if same instance was already used
+    self.matched_partons = []
+    self.matched_fsrs = {}
     if self.properties['Debug']: self.__log.setLevel('DEBUG')
     # Protections
     if self.properties['MatchingCriteria'] not in self.__functions:
