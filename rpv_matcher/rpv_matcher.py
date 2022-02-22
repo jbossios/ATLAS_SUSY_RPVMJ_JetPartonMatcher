@@ -253,8 +253,11 @@ class RPVMatcher():
               }
               self.__decorate_jet(jet, 'FSR', fsr_index, pdgid, jet_matched_barcode, gluino_barcode)
 
+  def __get_n_matched_jets(self):
+    return sum([1 if jet.is_matched() else 0 for jet in self.jets])
+
   def __check_n_matched_jets(self):
-    n_matched_jets = sum([1 if jet.is_matched() else 0 for jet in self.jets])
+    n_matched_jets = __get_n_matched(jets)
     if n_matched_jets > 6:
       self.__log.fatal('more than 6 ({}) jets are matched, exiting'.format(n_matched_jets))
       sys.exit(1)
@@ -267,7 +270,7 @@ class RPVMatcher():
     self.__log.debug('Will return {} jets'.format('only matched' if self.properties['ReturnOnlyMatched'] else 'all'))
     self.__log.debug('Matching partons to jets')
     self.__matcher_use_deltar_values_from_ft(self.partons, False)
-    if self.fsrs:
+    if self.fsrs and self.__get_n_matched_jets() < 6:
       self.__log.debug('Matching FSRs to jets')
       self.__matcher_use_deltar_values_from_ft(self.fsrs, True)
     self.__check_n_matched_jets()
@@ -277,7 +280,8 @@ class RPVMatcher():
     self.__log.debug('Jets will be matched to partons{} computing DeltaR values using a maximum DeltaR value of {}'.format(' and FSRs' if self.fsrs else '', self.properties['DeltaRcut']))
     self.__log.debug('Will return {} jets'.format('only matched' if self.properties['ReturnOnlyMatched'] else 'all'))
     self.__matcher_recompute_deltar_values(self.partons, False, self.properties['DeltaRcut'])
-    if self.fsrs: self.__matcher_recompute_deltar_values(self.fsrs, True, self.properties['DeltaRcut'])
+    if self.fsrs and self.__get_n_matched_jets() < 6:
+      self.__matcher_recompute_deltar_values(self.fsrs, True, self.properties['DeltaRcut'])
     self.__check_n_matched_jets()
     return self.__return_jets()
 
