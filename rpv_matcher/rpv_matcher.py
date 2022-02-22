@@ -6,12 +6,15 @@
 
 import ROOT
 import sys
+import copy
 import logging
 from typing import Union
 
 class RPVJet(ROOT.TLorentzVector):
-  def __init__(self):
+  def __init__(self, *args):
     ROOT.TLorentzVector.__init__(self)
+    if len(args) == 4:
+      self.SetPtEtaPhiE(args[0], args[1], args[2], args[3])
     self.__is_matched = False
     self.__match_type = 'None' # options: 'None', 'Parton', 'FSR'
     self.__match_parton_index = -1
@@ -58,8 +61,10 @@ class RPVJet(ROOT.TLorentzVector):
     return self.__matched_fsr_barcode
 
 class RPVParton(ROOT.TLorentzVector):
-  def __init__(self):
+  def __init__(self, *args):
     ROOT.TLorentzVector.__init__(self)
+    if len(args) == 4:
+      self.SetPtEtaPhiE(args[0], args[1], args[2], args[3])
     self.quark_barcode = -999 # barcode of last quark in chain corresponding to this FSR
     self.gluino_barcode = -999 # barcode of corresponding gluino
     self.barcode = -999 # particle's barcode
@@ -145,19 +150,20 @@ class RPVMatcher():
     """ Match jets to partons/FSRs re-computing DeltaR values """
     for jet_index, jet in enumerate(self.jets): # loop over jets
       if jet.is_matched(): continue # skip matched jet
-      matched_parton_index = -1
+      matched_parton_barcode = -1
       dr_min = 1E5
       for parton_index, parton in enumerate(partons): # loop over partons
-        if not is_fsr:
-          if parton_index in self.matched_partons: continue # skip matched parton
-        else: # FSR
-          if partons[parton_index].get_quark_barcode() in self.matched_partons: continue # skip FSR from matched parton
+        barcode = parton.get_barcode() if not is_fsr else parton.get_quark_barcode()
+        if barcode in self.matched_partons: continue # skip matched parton/FSR
+        # FIXME TODO skip already matched FSRs
+        # If two FSRs corresponding to the same last quark in the gluino decay chain are matched, match FSR matching the jet w/ highest pt (it only matters for calculating true reconstructed masses)
         dr = jet.DeltaR(parton)
         if dr < dr_min:
           dr_min = dr
           matched_parton_index = parton_index
+          matched_parton_barcode = barcode
       if dr_min < dr_cut: # jet is matched
-        self.matched_partons.append(matched_parton_index)
+        self.matched_partons.append(matched_parton_barcode)
         pdgid = partons[matched_parton_index].get_pdgid()
         barcode = partons[matched_parton_index].get_barcode()
         gluino_barcode = partons[matched_parton_index].get_gluino_barcode()
@@ -167,35 +173,54 @@ class RPVMatcher():
     """ Match jets to partons/FSRs using already computed DeltaR values from FT """
     self.__log.debug(f'Matching jets to {"partons" if not is_fsr else "FSRs"} using already computed DeltaR values from FT')
     for jet_index, jet in enumerate(self.jets): # loop over jets
+      if jet.is_matched(): continue # skip matched jet
       # Check if jet is matched
       jet_matched_barcode = jet.get_matched_parton_barcode() if not is_fsr else jet.get_matched_fsr_barcode()
       if jet_matched_barcode != -1: # make sure jet matches a parton/FSR
         if not is_fsr: # get parton's info
           parton_index, pdgid, gluino_barcode = self.__get_parton_info(partons, jet_matched_barcode)
-          self.matched_partons.append(parton_index)
+          self.matched_partons.append(jet_matched_barcode)
+          self.__log.debug(f'Decorating jet ({jet_index}) matched to a parton ({parton_index})')
           self.__decorate_jet(jet, 'Parton', parton_index, pdgid, jet_matched_barcode, gluino_barcode)
         else: # get FSR's info
           fsr_index, pdgid, gluino_barcode, quark_barcode = self.__get_fsr_info(partons, jet_matched_barcode)
-          self.__log.debug(f'Jet index {jet_index} is matched to FSR with index {fsr_index}')
-          if quark_barcode not in self.matched_partons: # make sure no other jet is matched to this quark already
-            self.__log.debug(f'{quark_barcode} is not in matched_partons')
-            if fsr_index not in self.matched_fsrs: # FSR matched for the first time
-              self.__log.debug(f'FSR matched for the first time')
-              self.matched_fsrs[fsr_index] = jet_index
+          if quark_barcode not in self.matched_partons: # make sure this quark is not already matched
+            self.__log.debug(f'Jet index {jet_index} is temporarily matched to FSR with index {fsr_index}')
+            self.__log.debug(f'{quark_barcode = }')
+            self.__log.debug(f'{self.matched_partons = }')
+            # If two FSRs corresponding to the same last quark in the gluino decay chain are matched, match FSR matching the jet w/ highest pt (it only matters for calculating true reconstructed masses)
+            another_fsr_matches_same_quark_barcode = False
+            current_matched_fsrs = copy.deepcopy(self.matched_fsrs)
+            for findex in current_matched_fsrs:
+              if current_matched_fsrs[findex]['quark_barcode'] == quark_barcode: # found another matched FSR from same quark from gluino
+                another_fsr_matches_same_quark_barcode = True
+                if partons[findex].Pt() > partons[fsr_index].Pt():
+                  self.__log.debug(f'Jet index {jet_index} will not be matched to FSR with index {fsr_index}')
+                  another_fsr_matches_same_quark_barcode = True
+                  pass # skip this FSR
+                else:
+                  self.__log.debug(f'Jet index {jet_index} will be matched to FSR with index {fsr_index} and jet ({current_matched_fsrs[findex]["jet_index"]}) will be unmatched')
+                  # unmatch old jet
+                  self.__remove_decoration(self.jets[current_matched_fsrs[findex]['jet_index']])
+                  self.matched_fsrs.pop(findex)
+                  # decorate new matched jet
+                  self.matched_fsrs[fsr_index] = {
+                    'jet_index' : jet_index,
+                    'quark_barcode': quark_barcode,
+                  }
+                  self.__decorate_jet(jet, 'FSR', fsr_index, pdgid, jet_matched_barcode, gluino_barcode)
+            if not another_fsr_matches_same_quark_barcode:
+              self.__log.debug(f'Jet index {jet_index} is matched to FSR with index {fsr_index}')
+              self.matched_fsrs[fsr_index] = {
+                'jet_index' : jet_index,
+                'quark_barcode': quark_barcode,
+              }
               self.__decorate_jet(jet, 'FSR', fsr_index, pdgid, jet_matched_barcode, gluino_barcode)
-            else: # FSR already matched to another jet (choose the one with largest pt)
-              self.__log.debug(f'FSR already matched to another jet')
-              if jet.Pt() > self.jets[self.matched_fsrs[fsr_index]].Pt():
-                # unmatch old jet
-                self.__remove_decoration(self.jets[self.matched_fsrs[fsr_index]])
-                # decorate new matched jet
-                self.matched_fsrs[fsr_index] = jet_index
-                self.__decorate_jet(jet, 'FSR', fsr_index, pdgid, jet_matched_barcode, gluino_barcode)
 
   def __check_n_matched_jets(self):
-    n_matched_jets = sum([1 if jet.is_matched else 0 for jet in self.jets])
+    n_matched_jets = sum([1 if jet.is_matched() else 0 for jet in self.jets])
     if n_matched_jets > 6:
-      self.__log.fatal('more than 6 {} jets are matched, exiting'.format(n_matched_jets))
+      self.__log.fatal('more than 6 ({}) jets are matched, exiting'.format(n_matched_jets))
       sys.exit(1)
 
   def __return_jets(self):
@@ -204,8 +229,11 @@ class RPVMatcher():
   def __match_use_deltar_values_from_ft(self) -> [RPVJet]:
     self.__log.debug('Jets will be matched to partons{} using DeltaR values from FactoryTools'.format(' and FSRs' if self.fsrs else ''))
     self.__log.debug('Will return {} jets'.format('only matched' if self.properties['ReturnOnlyMatched'] else 'all'))
+    self.__log.debug('Matching partons to jets')
     self.__matcher_use_deltar_values_from_ft(self.partons, False)
-    if self.fsrs: self.__matcher_use_deltar_values_from_ft(self.fsrs, True)
+    if self.fsrs:
+      self.__log.debug('Matching FSRs to jets')
+      self.__matcher_use_deltar_values_from_ft(self.fsrs, True)
     self.__check_n_matched_jets()
     return self.__return_jets()
 
@@ -279,6 +307,7 @@ class RPVMatcher():
     self.matched_partons = []
     self.matched_fsrs = {}
     if self.properties['Debug']: self.__log.setLevel('DEBUG')
+    self.__log.debug('Calling match()')
     # Protections
     if self.properties['MatchingCriteria'] not in self.__functions:
       self.__log.fatal(f'MatchingCriteria=={self.properties["MatchingCriteria"]} is not supported, exiting')
