@@ -265,11 +265,6 @@ class RPVMatcher():
       self.__log.debug('Matching FSRs to jets')
       self.__matcher_use_deltar_values_from_ft(self.fsrs, True)
     self.__check_n_matched_jets()
-    if self.properties['Debug']:
-      self.__log.debug('Final matching decisions:')
-      for jet_index, jet in enumerate(self.jets):
-        if jet.is_matched():
-          self.__log.debug(f'Jet {jet_index} is matched to {jet.get_match_type()} with {"" if jet.get_match_type()=="Parton" else " quark "} barcode {jet.get_match_barcode()}')
     return self.__return_jets()
 
   def __match_recompute_deltar_values(self) -> [RPVJet]:
