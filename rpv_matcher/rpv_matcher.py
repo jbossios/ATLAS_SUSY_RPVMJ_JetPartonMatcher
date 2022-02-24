@@ -4,10 +4,6 @@
 # Date:   21 February 2022                                              #
 #########################################################################
 
-# TODO/FIXME
-# Avoid duplicated code (move to fns)
-# Choose which FSR to match based on minDR OR highest pt jet
-
 import ROOT
 import sys
 import copy
