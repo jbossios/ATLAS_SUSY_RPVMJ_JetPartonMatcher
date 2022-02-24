@@ -13,7 +13,7 @@ The ```RPVMatcher``` class matches jets to last quarks in the gluino decay chain
 **NOTES:**
 
 - Jets must have been selected already (any kinematic/quality cut or of any other kind must have been applied already).
-- When FSRs are provided, first jets are tried to be matched to the particles provided as partons, then non-matched jets are tried to be matched FSRs not associated to already matched particles
+- When FSRs are provided, first jets are tried to be matched to the particles provided as partons, then non-matched jets are tried to be matched to FSRs not associated to already matched particles.
 - The matching procedure is decided through the ```MatchingCriteria``` property which states if DeltaR values are recomputed or if FT decisions are used instead.
 
 ### Inputs:
