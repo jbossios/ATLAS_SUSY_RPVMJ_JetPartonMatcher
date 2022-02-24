@@ -10,7 +10,11 @@
 
 The ```RPVMatcher``` class matches jets to last quarks in the gluino decay chain (and optionally FSRs).
 
-**NOTE:** Jets must have been selected already (any kinematic/quality cut or of any other kind must have been applied already).
+**NOTES:**
+
+- Jets must have been selected already (any kinematic/quality cut or of any other kind must have been applied already).
+- When FSRs are provided, first jets are tried to be matched to the particles provided as partons, then non-matched jets are tried to be matched FSRs not associated to already matched particles
+- The matching procedure is decided through the ```MatchingCriteria``` property which states if DeltaR values are recomputed or if FT decisions are used instead.
 
 ### Inputs:
 
@@ -39,7 +43,7 @@ add_fsrs(self, fsrs: [RPVParton])
 The following properties can be set through the ```set_property()``` method:
 
 - ```"ReturnOnlyMatched"``` (value type: ```bool```): set to ```True``` to return only matched jets (```False``` by default)
-- ```"MatchingCriteria"``` (value type: ```str```): there are currently two options: ```'UseFTDeltaRvalues'``` and ```'RecomputeDeltaRvalues'``` (```RecomputeDeltaRvalues``` by default)
+- ```"MatchingCriteria"``` (value type: ```str```): there are currently three options: ```'UseFTDeltaRvalues'```, ```'RecomputeDeltaRvalues_drPriority'``` and ```'RecomputeDeltaRvalues_ptPriority'``` (```RecomputeDeltaRvalues_drPriority``` by default)
 - ```"DeltaRcut"``` (value type: ```float```): maximum DeltaR value cut used for matching jets to partons when ```'MatchingCriteria' == 'RecomputeDeltaRvalues'``` (```0.4``` by default)
 - ```"Debug"``` (value type: ```bool```): enable higher verbosity (```False``` by default)
 
