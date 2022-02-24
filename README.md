@@ -10,6 +10,8 @@
 
 The ```RPVMatcher``` class matches jets to last quarks in the gluino decay chain (and optionally FSRs).
 
+**NOTE:** Jets must have been selected already (any kinematic/quality cut or of any other kind must have been applied already).
+
 ### Inputs:
 
 Three types of inputs are supported:
