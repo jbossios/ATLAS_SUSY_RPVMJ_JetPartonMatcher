@@ -311,6 +311,9 @@ class RPVMatcher():
     for key in kargs:
       if key in self.__properties_defaults:
         self.set_property(key, kargs[key])
+    # Protection
+    if self.properties['MatchFSRsFromMatchedGluinoDecays'] and not self.properties['DisableNmatchedJetProtection']:
+      self.__log.info('DisableNmatchedJetProtection property has been enabled since MatchFSRsFromMatchedGluinoDecays is enabled')
     self.matched_partons = []
     self.matched_fsrs = {}
     self.__functions = {
@@ -342,6 +345,9 @@ class RPVMatcher():
         self.__check_info(index, fsr, 'FSR')
 
   def match(self) -> [RPVJet]:
+    # Protection
+    if self.properties['MatchFSRsFromMatchedGluinoDecays'] and not self.properties['DisableNmatchedJetProtection']:
+      self.__log.info('DisableNmatchedJetProtection property has been enabled since MatchFSRsFromMatchedGluinoDecays is enabled')
     # clean up matching decisions if same instance was already used
     self.matched_partons = []
     self.matched_fsrs = {}
