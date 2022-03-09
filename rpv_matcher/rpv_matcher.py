@@ -96,6 +96,8 @@ class RPVMatcher():
     'DeltaRcut' : 0.4,
     'ReturnOnlyMatched' : False,
     'Debug': False,
+    'DisableNmatchedJetProtection': False,
+    'MatchFSRsFromMatchedGluinoDecays': False,
   }
   def add_jets(self, jets: [RPVJet]):
     self.jets = jets
@@ -206,7 +208,9 @@ class RPVMatcher():
       dr_min = 1E5
       for parton_index, parton in enumerate(partons): # loop over partons
         barcode = parton.get_barcode() if not is_fsr else parton.get_quark_barcode()
-        if barcode in self.matched_partons: continue # skip matched parton/FSR
+        if barcode in self.matched_partons: # skip matched parton/FSR
+          if not is_fsr: continue # always skip matched last-quark in gluino decay chain
+          elif not self.properties['MatchFSRsFromMatchedGluinoDecays']: continue # skip FSRs associated to matched gluino decay (unless asked not to)
         dr = jet.DeltaR(parton)
         if dr < dr_min:
           dr_min = dr
@@ -264,7 +268,8 @@ class RPVMatcher():
     if self.fsrs and self.__get_n_matched_jets() < 6:
       self.__log.debug('Matching FSRs to jets')
       self.__matcher_use_deltar_values_from_ft(self.fsrs, True)
-    self.__check_n_matched_jets()
+    if not self.properties['DisableNmatchedJetProtection']:
+      self.__check_n_matched_jets()
     return self.__return_jets()
 
   def __match_recompute_deltar_values(self) -> [RPVJet]:
@@ -274,7 +279,8 @@ class RPVMatcher():
     self.__matcher_recompute_deltar_values(self.partons, False, self.properties['DeltaRcut'])
     if self.fsrs and self.__get_n_matched_jets() < 6:
       self.__matcher_recompute_deltar_values(self.fsrs, True, self.properties['DeltaRcut'])
-    self.__check_n_matched_jets()
+    if not self.properties['DisableNmatchedJetProtection']:
+      self.__check_n_matched_jets()
     return self.__return_jets()
 
   def __init__(self, **kargs):
@@ -305,6 +311,9 @@ class RPVMatcher():
     for key in kargs:
       if key in self.__properties_defaults:
         self.set_property(key, kargs[key])
+    # Protection
+    if self.properties['MatchFSRsFromMatchedGluinoDecays'] and not self.properties['DisableNmatchedJetProtection']:
+      self.__log.info('DisableNmatchedJetProtection property has been enabled since MatchFSRsFromMatchedGluinoDecays is enabled')
     self.matched_partons = []
     self.matched_fsrs = {}
     self.__functions = {
@@ -336,6 +345,9 @@ class RPVMatcher():
         self.__check_info(index, fsr, 'FSR')
 
   def match(self) -> [RPVJet]:
+    # Protection
+    if self.properties['MatchFSRsFromMatchedGluinoDecays'] and not self.properties['DisableNmatchedJetProtection']:
+      self.__log.info('DisableNmatchedJetProtection property has been enabled since MatchFSRsFromMatchedGluinoDecays is enabled')
     # clean up matching decisions if same instance was already used
     self.matched_partons = []
     self.matched_fsrs = {}
