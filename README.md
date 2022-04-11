@@ -97,4 +97,4 @@ An example can be found in the repository as example.py
 
 ## UML Sequence Diagram for the case ```MatchingCriteria == 'UML_RecomputeDeltaRvalues_drPriority'```
 
-<img src="UML_RecomputeDeltaRvalues_drPriority.png" alt="UML Sequence Diagram" width="500"/>
+<img src="UML_RecomputeDeltaRvalues_drPriority.png" alt="UML Sequence Diagram" width="700"/>
