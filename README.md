@@ -94,3 +94,7 @@ get_match_gluino_barcode()
 ## Example
 
 An example can be found in the repository as example.py
+
+## UML Sequence Diagram for the case ```MatchingCriteria == 'UML_RecomputeDeltaRvalues_drPriority'```
+
+![UMLSeqDiagram](https://github.com/jbossios/ATLAS_SUSY_RPVMJ_JetPartonMatcher/blob/master/UML_RecomputeDeltaRvalues_drPriority.png)
