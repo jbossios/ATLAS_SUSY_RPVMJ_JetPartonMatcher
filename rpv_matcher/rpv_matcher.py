@@ -173,8 +173,8 @@ class RPVMatcher():
         pt_priority = self.properties['MatchingCriteria'] != 'RecomputeDeltaRvalues_drPriority'
         self.__log.debug(f'jet.Pt() = {jet.Pt()}')
         self.__log.debug(f"self.jets[{current_matched_fsrs[findex]['jet_index']}].Pt() = {self.jets[current_matched_fsrs[findex]['jet_index']].Pt()}")
-        self.__log.debug(f"jet.DeltaR(partons[info_dict['matched_parton_index']]) = {jet.DeltaR(partons[info_dict['matched_parton_index']])}")
-        self.__log.debug(f"self.jets[{current_matched_fsrs[findex]['jet_index']}].DeltaR(partons[info_dict['matched_parton_index']]) = {self.jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[info_dict['matched_parton_index']])}")
+        self.__log.debug(f"self.jets[{current_matched_fsrs[findex]['jet_index']}].DeltaR(partons[{findex}]) = {self.jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex])}")
+        self.__log.debug(f"jet.DeltaR(partons[{info_dict['matched_parton_index']}]) = {jet.DeltaR(partons[info_dict['matched_parton_index']])}")
         if pt_priority and jet.Pt() < self.jets[current_matched_fsrs[findex]['jet_index']].Pt():
           pass # do not match jet_index to matched_parton_index
         elif not pt_priority and self.jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex]) < jet.DeltaR(partons[info_dict['matched_parton_index']]):

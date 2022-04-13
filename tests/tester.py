@@ -41,7 +41,7 @@ def run_tester(matching_criteria = ''):
   selected_jets[3].SetPtEtaPhiE(20, 0, 3, 20)
   if matching_criteria == 'UseFTDeltaRvalues':
     selected_jets[3].set_matched_parton_barcode(-1)
-    selected_jets[3].set_matched_fsr_barcode(1)
+    selected_jets[3].set_matched_fsr_barcode(2)
   
   # Construct two partons and an FSR, all from same gluino
   
@@ -68,7 +68,7 @@ def run_tester(matching_criteria = ''):
   fsrs[1].SetPtEtaPhiE(20, 0, 3, 20) # matches fourth-leading jet
   fsrs[1].set_quark_barcode(3)
   fsrs[1].set_gluino_barcode(1)
-  fsrs[1].set_barcode(1)
+  fsrs[1].set_barcode(2)
   fsrs[1].set_pdgid(1)
   
   # Match jets to partons and FSRs
@@ -104,3 +104,8 @@ def run_tester(matching_criteria = ''):
     with open(output_file_name.replace('new', 'ref'), 'r') as ifile:
       print(ifile.read())
     sys.exit(1)
+
+if __name__ == '__main__':
+  run_tester('UseFTDeltaRvalues')
+  run_tester('RecomputeDeltaRvalues_drPriority')
+  run_tester('RecomputeDeltaRvalues_ptPriority')
