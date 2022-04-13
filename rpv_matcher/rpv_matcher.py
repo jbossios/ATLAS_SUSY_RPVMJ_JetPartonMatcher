@@ -121,7 +121,7 @@ class RPVMatcher():
     """ Get info of quark from gluino matched to a jet """
     # Loop over quarks from gluinos
     for parton_index, parton in enumerate(partons):
-      if partons[parton_index].barcode == barcode:
+      if partons[parton_index].get_barcode() == barcode:
         return parton_index, partons[parton_index].get_pdgid(), partons[parton_index].get_gluino_barcode()
     self.__log.error(f'Parton with barcode={barcode} not found, exiting')
     sys.exit(1)
@@ -129,7 +129,7 @@ class RPVMatcher():
   def __get_fsr_info(self, fsrs, barcode) -> ("index", "pdgID", "gluino_barcode", "quark_barcode"):
     """ Get info of FSR quark matched to a jet """
     for fsr_index, fsr in enumerate(fsrs): # loop over FSRs
-      if fsrs[fsr_index].barcode == barcode:
+      if fsrs[fsr_index].get_barcode() == barcode:
         return fsr_index, fsrs[fsr_index].get_pdgid(), fsrs[fsr_index].get_gluino_barcode(), fsrs[fsr_index].get_quark_barcode()
     self.__log.error(f'FSR with barcode={barcode} not found, exiting')
     sys.exit(1)
