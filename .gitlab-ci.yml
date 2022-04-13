@@ -11,4 +11,5 @@ tester:
     - python tests/test.py --matchingCriteria UseFTDeltaRvalues
   only:
     - master
+    - FixMatcherUsingFTDecisions
   allow_failure: false
