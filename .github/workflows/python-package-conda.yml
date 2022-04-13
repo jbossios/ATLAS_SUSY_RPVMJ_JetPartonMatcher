@@ -12,6 +12,8 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
+    container:
+      image: rootproject/root:6.22.06-conda
     strategy:
       max-parallel: 5
 
