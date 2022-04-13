@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
 
-    name="jbossios", # Replace with your username
+    name="jbossios",
 
     version="1.0.0",
 
@@ -14,13 +14,13 @@ setuptools.setup(
 
     author_email="",
 
-    description="A multi-purpose jet-parton matcher for the ATLAS SUSY RPV multijet search ",
+    description="Jet-parton matcher for the SUSY RPV MJ search",
 
     long_description=long_description,
 
     long_description_content_type="text/markdown",
 
-    url="A multi-purpose jet-parton matcher for the ATLAS SUSY RPV multijet search ",
+    url="https://github.com/jbossios/ATLAS_SUSY_RPVMJ_JetPartonMatcher",
 
     packages=setuptools.find_packages(),
 
