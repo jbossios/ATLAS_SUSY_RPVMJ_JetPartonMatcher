@@ -93,13 +93,14 @@ def run_tester(matching_criteria = ''):
   import filecmp
   result = filecmp.cmp(output_file_name, output_file_name.replace('new', 'ref'), shallow=False)
   if result:
-    log.info(f'Test passed for MatchingCriteria == {matching_criteria}')
+    print(f'Test passed for MatchingCriteria == {matching_criteria}')
   else:
-    log.error(f'Test NOT passed for MatchingCriteria == {matching_criteria} \n')
-    log.info(f'Content of {output_file_name}:')
+    print(f'Test NOT passed for MatchingCriteria == {matching_criteria} \n')
+    print('If changes are expected/understood, update the reference!\n')
+    print(f'Content of {output_file_name}:')
     with open(output_file_name, 'r') as ifile:
       print(ifile.read())
-    log.info(f'Content of {output_file_name.replace("new", "ref")}:')
+    print(f'Content of {output_file_name.replace("new", "ref")}:')
     with open(output_file_name.replace('new', 'ref'), 'r') as ifile:
       print(ifile.read())
     sys.exit(1)
