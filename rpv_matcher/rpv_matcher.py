@@ -171,9 +171,13 @@ class RPVMatcher():
       if current_matched_fsrs[findex]['quark_barcode'] == info_dict['matched_parton_barcode']: # found another matched FSR from same last quark from gluino
         another_fsr_matches_same_quark_barcode = True
         pt_priority = self.__properties['MatchingCriteria'] != 'RecomputeDeltaRvalues_drPriority'
-        if pt_priority and partons[findex].Pt() > partons[info_dict['matched_parton_index']].Pt():
+        self.__log.debug(f'jet.Pt() = {jet.Pt()}')
+        self.__log.debug(f"self.__jets[{current_matched_fsrs[findex]['jet_index']}].Pt() = {self.__jets[current_matched_fsrs[findex]['jet_index']].Pt()}")
+        self.__log.debug(f"self.__jets[{current_matched_fsrs[findex]['jet_index']}].DeltaR(partons[{findex}]) = {self.__jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex])}")
+        self.__log.debug(f"jet.DeltaR(partons[{info_dict['matched_parton_index']}]) = {jet.DeltaR(partons[info_dict['matched_parton_index']])}")
+        if pt_priority and jet.Pt() < self.__jets[current_matched_fsrs[findex]['jet_index']].Pt():
           pass # do not match jet_index to matched_parton_index
-        elif not pt_priority and self.__jets[info_dict['jet_index']].DeltaR(partons[findex]) < self.__jets[info_dict['jet_index']].DeltaR(partons[info_dict['matched_parton_index']]):
+        elif not pt_priority and self.__jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex]) < jet.DeltaR(partons[info_dict['matched_parton_index']]):
           pass # do not match jet_index to matched_parton_index
         else:
           # unmatch old jet
