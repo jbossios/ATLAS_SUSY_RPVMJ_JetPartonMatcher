@@ -143,10 +143,10 @@ class RPVMatcher():
         for parton_index, parton in enumerate(partons):
             if partons[parton_index].get_barcode() == barcode:
                 return (
-                  parton_index,
-                  partons[parton_index].get_pdgid(),
-                  partons[parton_index].get_gluino_barcode()
-                )
+                    parton_index,
+                    partons[parton_index].get_pdgid(),
+                    partons[parton_index].get_gluino_barcode()
+                    )
         self.__log.error(f'Parton with barcode={barcode} not found, exiting')
         sys.exit(1)
 
@@ -155,11 +155,11 @@ class RPVMatcher():
         for fsr_index, fsr in enumerate(fsrs):  # loop over FSRs
             if fsrs[fsr_index].get_barcode() == barcode:
                 return (
-                  fsr_index,
-                  fsrs[fsr_index].get_pdgid(),
-                  fsrs[fsr_index].get_gluino_barcode(),
-                  fsrs[fsr_index].get_quark_barcode()
-                )
+                    fsr_index,
+                    fsrs[fsr_index].get_pdgid(),
+                    fsrs[fsr_index].get_gluino_barcode(),
+                    fsrs[fsr_index].get_quark_barcode()
+                    )
         self.__log.error(f'FSR with barcode={barcode} not found, exiting')
         sys.exit(1)
 
@@ -284,28 +284,28 @@ class RPVMatcher():
                             )
         if not another_fsr_matches_same_quark_barcode:
             self.__matched_fsrs[info_dict['matched_parton_index']] = {
-              'jet_index': info_dict['jet_index'],
-              'quark_barcode': info_dict['matched_parton_barcode']
-            }
+                'jet_index': info_dict['jet_index'],
+                 'quark_barcode': info_dict['matched_parton_barcode']
+                }
             self.__log.debug(f'Jet {info_dict["jet_index"]} is matched to FSR {info_dict["matched_parton_index"]} with last quark barcode {info_dict["matched_parton_barcode"]} [check passed!]') # noqa
             if 'pdgid' in info_dict:
                 # Jets are matched to partons using FT decisions
                 self.__decorate_jet(
-                  jet,
-                  'FSR',
-                  info_dict['matched_parton_index'],
-                  info_dict['pdgid'],
-                  info_dict['matched_parton_barcode'],
-                  info_dict['gluino_barcode']
-                )
+                    jet,
+                    'FSR',
+                    info_dict['matched_parton_index'],
+                    info_dict['pdgid'],
+                    info_dict['matched_parton_barcode'],
+                    info_dict['gluino_barcode']
+                    )
             else:
                 # Jets are matched to partons recalculating DeltaR values
                 self.__get_parton_info_and_decorate_jet(
-                  partons=partons,
-                  jet=jet,
-                  case='FSR',
-                  info_dict=info_dict
-                )
+                    partons=partons,
+                    jet=jet,
+                    case='FSR',
+                    info_dict=info_dict
+                    )
 
     def __matcher_recompute_deltar_values(self, partons, is_fsr, dr_cut):
         """ Match jets to partons/FSRs re-computing DeltaR values """
@@ -335,27 +335,27 @@ class RPVMatcher():
                 if is_fsr:
                     self.__log.debug(f'Jet {jet_index} is matched (DeltaR={dr_min}) to FSR {matched_parton_index} with last quark barcode {matched_parton_barcode} [check pending...]') # noqa
                     info_dict = {
-                      'jet_index': jet_index,
-                      'matched_parton_index': matched_parton_index,
-                      'matched_parton_barcode': matched_parton_barcode
-                    }
+                        'jet_index': jet_index,
+                        'matched_parton_index': matched_parton_index,
+                        'matched_parton_barcode': matched_parton_barcode
+                        }
                     self.__check_fsr_match_and_decorate_jet(
-                      jet=jet,
-                      partons=partons,
-                      info_dict=info_dict
-                    )
+                        jet=jet,
+                        partons=partons,
+                        info_dict=info_dict
+                        )
                 else:  # not an FSR
                     self.__log.debug(f'Jet {jet_index} is matched (DeltaR={dr_min}) to last quark {matched_parton_index} with barcode {matched_parton_barcode}') # noqa
                     info_dict = {
-                      'matched_parton_index': matched_parton_index,
-                      'matched_parton_barcode': matched_parton_barcode
-                    }
+                        'matched_parton_index': matched_parton_index,
+                        'matched_parton_barcode': matched_parton_barcode
+                        }
                     self.__get_parton_info_and_decorate_jet(
-                      partons=partons,
-                      jet=jet,
-                      case='Parton',
-                      info_dict=info_dict
-                    )
+                        partons=partons,
+                        jet=jet,
+                        case='Parton',
+                        info_dict=info_dict
+                        )
 
     def __matcher_use_deltar_values_from_ft(self, partons, is_fsr):
         """
@@ -381,28 +381,28 @@ class RPVMatcher():
                     if quark_barcode not in self.__matched_partons:
                         self.__log.debug(f'Jet {jet_index} is matched to FSR (barcode={jet_matched_barcode}) with last quark barcode {quark_barcode} [check 1/2 passed!]') # noqa
                         info_dict = {
-                          'jet_index': jet_index,
-                          'matched_parton_index': fsr_index,
-                          'matched_parton_barcode': quark_barcode,
-                          'pdgid': pdgid,
-                          'gluino_barcode': gluino_barcode
-                          }
+                            'jet_index': jet_index,
+                            'matched_parton_index': fsr_index,
+                            'matched_parton_barcode': quark_barcode,
+                            'pdgid': pdgid,
+                            'gluino_barcode': gluino_barcode
+                            }
                         self.__check_fsr_match_and_decorate_jet(
-                          jet=jet,
-                          partons=partons,
-                          info_dict=info_dict
-                        )
+                            jet=jet,
+                            partons=partons,
+                            info_dict=info_dict
+                            )
                     else:
                         self.__log.debug(f"Jet {jet_index} is matched to FSR (barcode={jet_matched_barcode}) with last quark barcode {quark_barcode} [check 1/2 didn't pass!]") # noqa
                 else:
                     self.__log.debug(f'Jet {jet_index} is matched to last quark (barcode={jet_matched_barcode})') # noqa
                     info_dict = {'jet_matched_barcode': jet_matched_barcode}
                     self.__get_parton_info_and_decorate_jet(
-                      partons=partons,
-                      jet=jet,
-                      case='Parton',
-                      info_dict=info_dict
-                    )
+                        partons=partons,
+                        jet=jet,
+                        case='Parton',
+                        info_dict=info_dict
+                        )
 
     def __get_n_matched_jets(self) -> int:
         """ Get number of matched jets """
@@ -501,10 +501,10 @@ class RPVMatcher():
         self.__matched_partons = []
         self.__matched_fsrs = {}
         self.__functions = {
-          'RecomputeDeltaRvalues_ptPriority': self.__match_recompute_deltar_values, # noqa
-          'RecomputeDeltaRvalues_drPriority': self.__match_recompute_deltar_values, # noqa
-          'UseFTDeltaRvalues': self.__match_use_deltar_values_from_ft,
-        }
+            'RecomputeDeltaRvalues_ptPriority': self.__match_recompute_deltar_values, # noqa
+            'RecomputeDeltaRvalues_drPriority': self.__match_recompute_deltar_values, # noqa
+            'UseFTDeltaRvalues': self.__match_use_deltar_values_from_ft,
+            }
 
     def __check_info(self, index, particle, particle_type):
         parton_type = "parton" if particle_type == "Parton" else "FSR"
