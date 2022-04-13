@@ -43,7 +43,9 @@ add_fsrs(self, fsrs: [RPVParton])
 The following properties can be set through the ```set_property()``` method:
 
 - ```"ReturnOnlyMatched"``` (value type: ```bool```): set to ```True``` to return only matched jets (```False``` by default)
-- ```"MatchingCriteria"``` (value type: ```str```): there are currently three options: ```'UseFTDeltaRvalues'```, ```'RecomputeDeltaRvalues_drPriority'``` and ```'RecomputeDeltaRvalues_ptPriority'``` (```RecomputeDeltaRvalues_drPriority``` by default)
+- ```"MatchingCriteria"``` (value type: ```str```): there are currently three options: ```'UseFTDeltaRvalues'```, ```'RecomputeDeltaRvalues_drPriority'``` and ```'RecomputeDeltaRvalues_ptPriority'``` (```RecomputeDeltaRvalues_drPriority``` by default):
+  - ```'RecomputeDeltaRvalues_drPriority'```: When using FSRs, if two jet-FSR pairs are associated to the same last quark in chain, the jet-FSR pair with lowest DeltaR value is chosen
+  - ```'RecomputeDeltaRvalues_ptPriority'```: When using FSRs, if two jet-FSR paris are associated to the same last quark in chain, the jet-FSR pair having the largest jet pt is chosen
 - ```"DeltaRcut"``` (value type: ```float```): maximum DeltaR value cut used for matching jets to partons when ```'MatchingCriteria' == 'RecomputeDeltaRvalues'``` (```0.4``` by default)
 - ```"Debug"``` (value type: ```bool```): enable higher verbosity (```False``` by default)
 
