@@ -177,7 +177,7 @@ class RPVMatcher():
         self.__log.debug(f"self.jets[{current_matched_fsrs[findex]['jet_index']}].DeltaR(partons[info_dict['matched_parton_index']]) = {self.jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[info_dict['matched_parton_index']])}")
         if pt_priority and jet.Pt() < self.jets[current_matched_fsrs[findex]['jet_index']].Pt():
           pass # do not match jet_index to matched_parton_index
-        elif not pt_priority and jet.DeltaR(partons[info_dict['matched_parton_index']]) > self.jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[info_dict['matched_parton_index']]):
+        elif not pt_priority and self.jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex]) < jet.DeltaR(partons[info_dict['matched_parton_index']]):
           pass # do not match jet_index to matched_parton_index
         else:
           # unmatch old jet
