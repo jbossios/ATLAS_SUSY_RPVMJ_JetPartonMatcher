@@ -111,13 +111,13 @@ class RPVParton(ROOT.TLorentzVector):
 
 class RPVMatcher():
     __properties_defaults = {
-      'MatchingCriteria': 'RecomputeDeltaRvalues_drPriority',  # other options: 'UseFTDeltaRvalues', 'RecomputeDeltaRvalues_drPriority' # noqa
-      'DeltaRcut': 0.4,
-      'ReturnOnlyMatched': False,
-      'Debug': False,
-      'DisableNmatchedJetProtection': False,
-      'MatchFSRsFromMatchedGluinoDecays': False
-    }
+        'MatchingCriteria': 'RecomputeDeltaRvalues_drPriority',  # other options: 'UseFTDeltaRvalues', 'RecomputeDeltaRvalues_drPriority' # noqa
+        'DeltaRcut': 0.4,
+        'ReturnOnlyMatched': False,
+        'Debug': False,
+        'DisableNmatchedJetProtection': False,
+        'MatchFSRsFromMatchedGluinoDecays': False
+        }
 
     def add_jets(self, jets: [RPVJet]):
         self.__jets = jets
