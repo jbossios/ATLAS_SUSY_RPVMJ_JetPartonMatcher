@@ -285,7 +285,7 @@ class RPVMatcher():
         if not another_fsr_matches_same_quark_barcode:
             self.__matched_fsrs[info_dict['matched_parton_index']] = {
                 'jet_index': info_dict['jet_index'],
-                 'quark_barcode': info_dict['matched_parton_barcode']
+                'quark_barcode': info_dict['matched_parton_barcode']
                 }
             self.__log.debug(f'Jet {info_dict["jet_index"]} is matched to FSR {info_dict["matched_parton_index"]} with last quark barcode {info_dict["matched_parton_barcode"]} [check passed!]') # noqa
             if 'pdgid' in info_dict:
