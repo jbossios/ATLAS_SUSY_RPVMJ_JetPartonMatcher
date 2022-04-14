@@ -242,21 +242,22 @@ class RPVMatcher():
                 # I found another matched FSR from same last quark from gluino
                 another_fsr_matches_same_quark_barcode = True
                 pt_priority = self.__properties['MatchingCriteria'] != 'RecomputeDeltaRvalues_drPriority' # noqa
+                parton = partons[info_dict['matched_parton_index']]
+                other_jet_index = current_matched_fsrs[findex]['jet_index']
+                other_jet = self.__jets[other_jet_index]
+                other_parton = partons[findex]
                 self.__log.debug(f'jet.Pt() = {jet.Pt()}')
-                self.__log.debug(f"self.__jets[{current_matched_fsrs[findex]['jet_index']}].Pt() = {self.__jets[current_matched_fsrs[findex]['jet_index']].Pt()}") # noqa
-                self.__log.debug(f"self.__jets[{current_matched_fsrs[findex]['jet_index']}].DeltaR(partons[{findex}]) = {self.__jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex])}") # noqa
-                self.__log.debug(f"jet.DeltaR(partons[{info_dict['matched_parton_index']}]) = {jet.DeltaR(partons[info_dict['matched_parton_index']])}") # noqa
-                if pt_priority and jet.Pt() < self.__jets[current_matched_fsrs[findex]['jet_index']].Pt(): # noqa
+                self.__log.debug(f"other_jet.Pt() = {other_jet.Pt()}")
+                self.__log.debug(f"other_jet.DeltaR(other_parton) = {other_jet.DeltaR(other_parton)}") # noqa
+                self.__log.debug(f"jet.DeltaR(parton) = {jet.DeltaR(parton)}")
+                if pt_priority and jet.Pt() < other_jet.Pt():
                     pass  # do not match jet_index to matched_parton_index
-                elif not pt_priority:
-                    if self.__jets[current_matched_fsrs[findex]['jet_index']].DeltaR(partons[findex]) < jet.DeltaR(partons[info_dict['matched_parton_index']]): # noqa
-                        pass  # do not match jet_index to matched_parton_index
+                elif not pt_priority and other_jet.DeltaR(other_parton) < jet.DeltaR(parton): # noqa
+                    pass  # do not match jet_index to matched_parton_index
                 else:
                     # unmatch old jet
-                    self.__log.debug(f'Jet {current_matched_fsrs[findex]["jet_index"]} is un-matched to FSR {findex} with last quark barcode {current_matched_fsrs[findex]["quark_barcode"]}') # noqa
-                    self.__remove_decoration(
-                        self.__jets[current_matched_fsrs[findex]['jet_index']]
-                        )
+                    self.__log.debug(f'Jet {other_jet_index} is un-matched to FSR {findex} with last quark barcode {current_matched_fsrs[findex]["quark_barcode"]}') # noqa
+                    self.__remove_decoration(other_jet)
                     self.__matched_fsrs.pop(findex)
                     # decorate new matched jet
                     self.__matched_fsrs[info_dict['matched_parton_index']] = {
