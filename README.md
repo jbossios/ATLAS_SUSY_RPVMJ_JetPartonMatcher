@@ -97,6 +97,10 @@ get_match_gluino_barcode()
 
 An example can be found in the repository as example.py
 
+## For developers
+
+Please run ```python -m pytest``` for testing your local changes. If changes on the references are observed and understood, update reference files with ```update_references.py```.
+
 ## UML Sequence Diagram for the case ```MatchingCriteria == 'RecomputeDeltaRvalues_drPriority'```
 
 <img src="UML_RecomputeDeltaRvalues_drPriority.png" alt="UML Sequence Diagram for RecomputeDeltaRvalues_drPriority" width="900"/>
