@@ -98,7 +98,7 @@ def run_tester(matching_criteria=''):
         print(f'Test passed for {matching_criteria}')
     else:
         print(f'Test NOT passed for {matching_criteria}\n')
-        print('If changes are expected/understood, update the reference!\n')
+        print('If changes are expected/understood, update the reference with update_references.py!\n')
         print(f'Content of {output_file_name}:')
         with open(output_file_name, 'r') as ifile:
             print(ifile.read())
