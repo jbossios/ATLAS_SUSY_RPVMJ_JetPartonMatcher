@@ -39,3 +39,6 @@ jobs:
         pip install -e .
         conda install pytest
         pytest
+    - name: Adding markdown
+      if: ${{ failure() }}
+      run: echo 'If changes on the references are expected and understood, update reference files with ```update_references.py```' >> $GITHUB_STEP_SUMMARY
