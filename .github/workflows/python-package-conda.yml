@@ -41,4 +41,6 @@ jobs:
         pytest
     - name: Adding markdown
       if: ${{ failure() }}
-      run: echo 'If changes on the references are expected and understood, update reference files with ```update_references.py```' >> $GITHUB_STEP_SUMMARY
+      run: |
+        echo '# CI test failed!' >> $GITHUB_STEP_SUMMARY
+        echo 'If changes on the references are expected and understood, update reference files with ```update_references.py```' >> $GITHUB_STEP_SUMMARY
