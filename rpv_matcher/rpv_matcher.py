@@ -16,6 +16,7 @@ class RPVJet(ROOT.TLorentzVector):
         ROOT.TLorentzVector.__init__(self)
         if len(args) == 4:
             self.SetPtEtaPhiE(args[0], args[1], args[2], args[3])
+        self.__qgtagger_bdt = -999
         self.__is_matched = False
         self.__match_type = 'None'  # options: 'None', 'Parton', 'FSR'
         self.__match_parton_index = -1
@@ -24,6 +25,9 @@ class RPVJet(ROOT.TLorentzVector):
         self.__match_gluino_barcode = -1
         self.__matched_parton_barcode = -1
         self.__matched_fsr_barcode = -1
+
+    def get_qgtagger_bdt(self):
+        return self.__qgtagger_bdt
 
     def is_matched(self):
         return self.__is_matched
@@ -42,6 +46,9 @@ class RPVJet(ROOT.TLorentzVector):
 
     def get_match_gluino_barcode(self):
         return self.__match_gluino_barcode
+
+    def set_qgtagger_bdt(self, score):
+        self.__qgtagger_bdt = score
 
     def set_matched_status(self, status):
         self.__is_matched = status
