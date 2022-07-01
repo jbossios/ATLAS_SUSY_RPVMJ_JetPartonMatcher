@@ -123,7 +123,7 @@ class RPVMatcher():
         'Debug': False,
         'DisableNmatchedJetProtection': False,
         'MatchFSRsFromMatchedGluinoDecays': False,
-        'nMatchedJets':6
+        'nMatchedJets': 6
         }
 
     def add_jets(self, jets: [RPVJet]):
