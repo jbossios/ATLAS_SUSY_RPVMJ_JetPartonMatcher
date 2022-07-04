@@ -123,7 +123,7 @@ class RPVMatcher():
         'Debug': False,
         'DisableNmatchedJetProtection': False,
         'MatchFSRsFromMatchedGluinoDecays': False,
-        'nMatchedJets': 6
+        'maxNmatchedJets': 6
         }
 
     def add_jets(self, jets: [RPVJet]):
@@ -417,11 +417,11 @@ class RPVMatcher():
         return sum([1 if jet.is_matched() else 0 for jet in self.__jets])
 
     def __check_n_matched_jets(self):
-        """ Exit if more than nMatchedJets jets were matched
+        """ Exit if more than maxNmatchedJets jets were matched
         (this is a protection, it should never happen) """
         n_matched_jets = self.__get_n_matched_jets()
-        if n_matched_jets > self.__properties['nMatchedJets']:
-            msg = f'more than {self.__properties["nMatchedJets"]} ({n_matched_jets}) jets are matched, exiting'
+        if n_matched_jets > self.__properties['maxNmatchedJets']:
+            msg = f'more than {self.__properties["maxNmatchedJets"]} ({n_matched_jets}) jets are matched, exiting'
             self.__log.fatal(msg)
             sys.exit(1)
 
@@ -447,7 +447,7 @@ class RPVMatcher():
         self.__log.debug(msg)
         self.__log.debug('Matching partons to jets')
         self.__matcher_use_deltar_values_from_ft(self.__partons, False)
-        if self.__fsrs and self.__get_n_matched_jets() < self.__properties_defaults['nMatchedJets']:
+        if self.__fsrs and self.__get_n_matched_jets() < self.__properties['maxNmatchedJets']:
             self.__log.debug('Matching FSRs to jets')
             self.__matcher_use_deltar_values_from_ft(self.__fsrs, True)
         if not self.__properties['DisableNmatchedJetProtection']:
@@ -465,7 +465,7 @@ class RPVMatcher():
         msg = f'Will return {case} jets'
         self.__log.debug(msg)
         self.__matcher_recompute_deltar_values(self.__partons, 0, cut)
-        if self.__fsrs and self.__get_n_matched_jets() < self.__properties_defaults['nMatchedJets']:
+        if self.__fsrs and self.__get_n_matched_jets() < self.__properties['maxNmatchedJets']:
             self.__matcher_recompute_deltar_values(self.__fsrs, 1, cut)
         if not properties['DisableNmatchedJetProtection']:
             self.__check_n_matched_jets()
