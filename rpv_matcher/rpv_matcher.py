@@ -420,8 +420,8 @@ class RPVMatcher():
         """ Exit if more than nMatchedJets jets were matched
         (this is a protection, it should never happen) """
         n_matched_jets = self.__get_n_matched_jets()
-        if n_matched_jets > self.__properties_defaults['nMatchedJets']:
-            msg = f'more than {self.__properties_defaults["nMatchedJets"]} ({n_matched_jets}) jets are matched, exiting'
+        if n_matched_jets > self.__properties['nMatchedJets']:
+            msg = f'more than {self.__properties["nMatchedJets"]} ({n_matched_jets}) jets are matched, exiting'
             self.__log.fatal(msg)
             sys.exit(1)
 
