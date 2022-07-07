@@ -23,6 +23,7 @@ class RPVJet(ROOT.TLorentzVector):
         self.__match_pdgID = -1
         self.__match_barcode = -1
         self.__match_gluino_barcode = -1
+        self.__match_neutralino_barcode = -1
         self.__matched_parton_barcode = -1
         self.__matched_fsr_barcode = -1
 
@@ -47,6 +48,9 @@ class RPVJet(ROOT.TLorentzVector):
     def get_match_gluino_barcode(self):
         return self.__match_gluino_barcode
 
+    def get_match_neutralino_barcode(self):
+        return self.__match_neutralino_barcode
+
     def set_qgtagger_bdt(self, score):
         self.__qgtagger_bdt = score
 
@@ -67,6 +71,9 @@ class RPVJet(ROOT.TLorentzVector):
 
     def set_match_gluino_barcode(self, barcode):
         self.__match_gluino_barcode = barcode
+
+    def set_match_neutralino_barcode(self, barcode):
+        self.__match_neutralino_barcode = barcode
 
     def set_matched_parton_barcode(self, barcode):
         self.__matched_parton_barcode = barcode
@@ -159,7 +166,8 @@ class RPVMatcher():
                 return (
                     parton_index,
                     partons[parton_index].get_pdgid(),
-                    partons[parton_index].get_gluino_barcode()
+                    partons[parton_index].get_gluino_barcode(),
+                    partons[parton_index].get_neutralino_barcode()
                     )
         self.__log.error(f'Parton with barcode={barcode} not found, exiting')
         sys.exit(1)
@@ -184,7 +192,8 @@ class RPVMatcher():
             parton_index,
             pdgid,
             barcode,
-            gluino_barcode
+            gluino_barcode,
+            neutralino_barcode
             ):
         jet.set_matched_status(True)
         jet.set_match_type(match_type)
@@ -192,6 +201,7 @@ class RPVMatcher():
         jet.set_match_pdgid(pdgid)
         jet.set_match_barcode(barcode)
         jet.set_match_gluino_barcode(gluino_barcode)
+        jet.set_match_neutralino_barcode(neutralino_barcode)
 
     def __remove_decoration(self, jet):
         jet.set_matched_status(False)
@@ -200,6 +210,7 @@ class RPVMatcher():
         jet.set_match_pdgid(-1)
         jet.set_match_barcode(-1)
         jet.set_match_gluino_barcode(-1)
+        jet.set_match_neutralino_barcode(-1)
 
     def __get_parton_info_and_decorate_jet(
             self,
@@ -214,14 +225,15 @@ class RPVMatcher():
             if case == 'Parton':
                 self.__matched_partons.append(jet_matched_barcode)
             parton_info = self.__get_parton_info(partons, jet_matched_barcode)
-            parton_index, pdgid, gluino_barcode = parton_info
+            parton_index, pdgid, gluino_barcode, neutralino_barcode = parton_info
             self.__decorate_jet(
                 jet,
                 case,
                 parton_index,
                 pdgid,
                 jet_matched_barcode,
-                gluino_barcode
+                gluino_barcode,
+                neutralino_barcode if neutralino_barcode != -999 else -1
                 )
         elif 'matched_parton_index' in info_dict:
             # Jets are matched to partons recalculating DeltaR values
@@ -232,13 +244,15 @@ class RPVMatcher():
             matched_parton_index = info_dict['matched_parton_index']
             pdgid = partons[matched_parton_index].get_pdgid()
             gluino_barcode = partons[matched_parton_index].get_gluino_barcode()
+            neutralino_barcode = partons[matched_parton_index].get_neutralino_barcode()
             self.__decorate_jet(
                 jet,
                 case,
                 matched_parton_index,
                 pdgid,
                 info_dict['matched_parton_barcode'],
-                gluino_barcode
+                gluino_barcode,
+                neutralino_barcode if neutralino_barcode != -999 else -1
                 )
 
     def __check_fsr_match_and_decorate_jet(self, jet, partons, info_dict):
@@ -287,7 +301,8 @@ class RPVMatcher():
                             info_dict['matched_parton_index'],
                             info_dict['pdgid'],
                             info_dict['matched_parton_barcode'],
-                            info_dict['gluino_barcode']
+                            info_dict['gluino_barcode'],
+                            info_dict['neutralino_barcode']
                             )
                     else:
                         # Jets are matched to partons remaking decisions
@@ -311,7 +326,8 @@ class RPVMatcher():
                     info_dict['matched_parton_index'],
                     info_dict['pdgid'],
                     info_dict['matched_parton_barcode'],
-                    info_dict['gluino_barcode']
+                    info_dict['gluino_barcode'],
+                    info_dict['neutralino_barcode']
                     )
             else:
                 # Jets are matched to partons recalculating DeltaR values
