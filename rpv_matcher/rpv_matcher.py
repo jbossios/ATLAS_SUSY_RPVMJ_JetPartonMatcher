@@ -87,6 +87,7 @@ class RPVParton(ROOT.TLorentzVector):
             self.SetPtEtaPhiE(args[0], args[1], args[2], args[3])
         self.__quark_barcode = -999  # barcode of last quark in chain corresponding to this FSR # noqa
         self.__gluino_barcode = -999  # barcode of corresponding gluino
+        self.__neutralino_barcode = -999  # barcode of corresponding neutralino (optional)
         self.__barcode = -999  # particle's barcode
         self.__pdgID = -999  # particle's pdg ID
 
@@ -99,8 +100,14 @@ class RPVParton(ROOT.TLorentzVector):
     def set_gluino_barcode(self, barcode):
         self.__gluino_barcode = barcode
 
+    def set_neutralino_barcode(self, barcode):
+        self.__neutralino_barcode = barcode
+
     def get_gluino_barcode(self):
         return self.__gluino_barcode
+
+    def get_neutralino_barcode(self):
+        return self.__neutralino_barcode
 
     def set_barcode(self, barcode):
         self.__barcode = barcode
@@ -271,7 +278,7 @@ class RPVMatcher():
                         'jet_index': info_dict['jet_index'],
                         'quark_barcode': info_dict['matched_parton_barcode'],
                         }
-                    self.__log.debug(f'Jet {info_dict["jet_index"]} is matched to FSR {info_dict["matched_parton_index"]} with last quark barcode {info_dict["matched_parton_barcode"]} [check passed!]') # noqa
+                    self.__log.debug(f'Jet {info_dict["jet_index"]} (eta={round(jet.Eta(), 2)}, phi={round(jet.Phi(), 2)}) is matched to FSR {info_dict["matched_parton_index"]} with last quark barcode {info_dict["matched_parton_barcode"]} [check passed!]') # noqa
                     if 'pdgid' in info_dict:
                         # Jets are matched to partons using FT decisions
                         self.__decorate_jet(
@@ -295,7 +302,7 @@ class RPVMatcher():
                 'jet_index': info_dict['jet_index'],
                 'quark_barcode': info_dict['matched_parton_barcode']
                 }
-            self.__log.debug(f'Jet {info_dict["jet_index"]} is matched to FSR {info_dict["matched_parton_index"]} with last quark barcode {info_dict["matched_parton_barcode"]} [check passed!]') # noqa
+            self.__log.debug(f'Jet {info_dict["jet_index"]} (eta={round(jet.Eta(), 2)}, phi={round(jet.Phi(), 2)}) is matched to FSR {info_dict["matched_parton_index"]} with last quark barcode {info_dict["matched_parton_barcode"]} [check passed!]') # noqa
             if 'pdgid' in info_dict:
                 # Jets are matched to partons using FT decisions
                 self.__decorate_jet(
@@ -341,7 +348,7 @@ class RPVMatcher():
                     matched_parton_barcode = barcode
             if dr_min < dr_cut:  # jet is matched
                 if is_fsr:
-                    self.__log.debug(f'Jet {jet_index} is matched (DeltaR={dr_min}) to FSR {matched_parton_index} with last quark barcode {matched_parton_barcode} [check pending...]') # noqa
+                    self.__log.debug(f'Jet {jet_index} (eta={round(jet.Eta(), 2)}, phi={round(jet.Phi(), 2)}) is matched (DeltaR={round(dr_min, 2)}) to FSR {matched_parton_index} with last quark barcode {matched_parton_barcode} [check pending...]') # noqa
                     info_dict = {
                         'jet_index': jet_index,
                         'matched_parton_index': matched_parton_index,
@@ -353,7 +360,7 @@ class RPVMatcher():
                         info_dict=info_dict
                         )
                 else:  # not an FSR
-                    self.__log.debug(f'Jet {jet_index} is matched (DeltaR={dr_min}) to last quark {matched_parton_index} with barcode {matched_parton_barcode}') # noqa
+                    self.__log.debug(f'Jet {jet_index} (eta={round(jet.Eta(), 2)}, phi={round(jet.Phi(), 2)}) is matched (DeltaR={round(dr_min, 2)}) to last quark {matched_parton_index} with barcode {matched_parton_barcode}') # noqa
                     info_dict = {
                         'matched_parton_index': matched_parton_index,
                         'matched_parton_barcode': matched_parton_barcode
