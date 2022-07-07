@@ -158,7 +158,7 @@ class RPVMatcher():
     def debug(self):
         self.set_property('Debug', True)
 
-    def __get_parton_info(self, partons, barcode) -> Tuple:  # -> ("index", "pdgID", "gluino_barcode") # noqa
+    def __get_parton_info(self, partons, barcode) -> Tuple:  # -> ("index", "pdgID", "gluino_barcode", "neutralino_barcode") # noqa
         """ Get info of quark from gluino matched to a jet """
         # Loop over quarks from gluinos
         for parton_index, parton in enumerate(partons):
@@ -172,7 +172,7 @@ class RPVMatcher():
         self.__log.error(f'Parton with barcode={barcode} not found, exiting')
         sys.exit(1)
 
-    def __get_fsr_info(self, fsrs, barcode) -> Tuple:  # -> ("index", "pdgID", "gluino_barcode", "quark_barcode") # noqa
+    def __get_fsr_info(self, fsrs, barcode) -> Tuple:  # -> ("index", "pdgID", "gluino_barcode", "quark_barcode", "neutralino_barcode") # noqa
         """ Get info of FSR quark matched to a jet """
         for fsr_index, fsr in enumerate(fsrs):  # loop over FSRs
             if fsrs[fsr_index].get_barcode() == barcode:
@@ -180,7 +180,8 @@ class RPVMatcher():
                     fsr_index,
                     fsrs[fsr_index].get_pdgid(),
                     fsrs[fsr_index].get_gluino_barcode(),
-                    fsrs[fsr_index].get_quark_barcode()
+                    fsrs[fsr_index].get_quark_barcode(),
+                    fsrs[fsr_index].get_neutralino_barcode()
                     )
         self.__log.error(f'FSR with barcode={barcode} not found, exiting')
         sys.exit(1)
@@ -406,7 +407,7 @@ class RPVMatcher():
                         partons,
                         jet_matched_barcode
                         )
-                    fsr_index, pdgid, gluino_barcode, quark_barcode = fsr_info_tuple # noqa
+                    fsr_index, pdgid, gluino_barcode, quark_barcode, neutralino_barcode = fsr_info_tuple # noqa
                     self.__log.debug(f'Jet {jet_index} is matched to FSR (barcode={jet_matched_barcode}) with last quark barcode {quark_barcode} [check pending...]') # noqa
                     # Make sure this quark is not already matched
                     if quark_barcode not in self.__matched_partons:
@@ -416,7 +417,8 @@ class RPVMatcher():
                             'matched_parton_index': fsr_index,
                             'matched_parton_barcode': quark_barcode,
                             'pdgid': pdgid,
-                            'gluino_barcode': gluino_barcode
+                            'gluino_barcode': gluino_barcode,
+                            'neutralino_barcode': neutralino_barcode if neutralino_barcode != -999 else neutralino_barcode
                             }
                         self.__check_fsr_match_and_decorate_jet(
                             jet=jet,
