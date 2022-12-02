@@ -24,6 +24,7 @@ class RPVJet(ROOT.TLorentzVector):
         self.__match_barcode = -1
         self.__match_gluino_barcode = -1
         self.__match_neutralino_barcode = -1
+        self.__match_neutralino = False
         self.__matched_parton_barcode = -1
         self.__matched_fsr_barcode = -1
 
@@ -50,6 +51,15 @@ class RPVJet(ROOT.TLorentzVector):
 
     def get_match_neutralino_barcode(self):
         return self.__match_neutralino_barcode
+
+    def set_match_neutralino(self):
+        self.__match_neutralino = True
+
+    def unset_match_neutralino(self):
+        self.__match_neutralino = False
+
+    def is_matched_to_neutralino(self):
+        return self.__match_neutralino
 
     def set_qgtagger_bdt(self, score):
         self.__qgtagger_bdt = score
@@ -97,6 +107,7 @@ class RPVParton(ROOT.TLorentzVector):
         self.__neutralino_barcode = -999  # barcode of corresponding neutralino (optional)
         self.__barcode = -999  # particle's barcode
         self.__pdgID = -999  # particle's pdg ID
+        self.__from_neutralino = False  # parton coming from a neutralino
 
     def set_quark_barcode(self, barcode):
         self.__quark_barcode = barcode
@@ -127,6 +138,12 @@ class RPVParton(ROOT.TLorentzVector):
 
     def get_pdgid(self):
         return self.__pdgID
+
+    def set_is_coming_from_neutralino(self):
+        self.__from_neutralino = True
+
+    def is_coming_from_neutralino(self):
+        return self.__from_neutralino
 
 
 class RPVMatcher():
@@ -204,6 +221,8 @@ class RPVMatcher():
         jet.set_match_barcode(barcode)
         jet.set_match_gluino_barcode(gluino_barcode)
         jet.set_match_neutralino_barcode(neutralino_barcode)
+        if neutralino_barcode != -999:
+            jet.set_match_neutralino()
 
     def __remove_decoration(self, jet):
         jet.set_matched_status(False)
@@ -213,6 +232,8 @@ class RPVMatcher():
         jet.set_match_barcode(-1)
         jet.set_match_gluino_barcode(-1)
         jet.set_match_neutralino_barcode(-1)
+        if jet.is_matched_to_neutralino():
+            jet.unset_match_neutralino()
 
     def __get_parton_info_and_decorate_jet(
             self,
@@ -235,7 +256,8 @@ class RPVMatcher():
                 pdgid,
                 jet_matched_barcode,
                 gluino_barcode,
-                neutralino_barcode if neutralino_barcode != -999 else -1
+                #neutralino_barcode if neutralino_barcode != -999 else -1
+                neutralino_barcode
                 )
         elif 'matched_parton_index' in info_dict:
             # Jets are matched to partons recalculating DeltaR values
@@ -254,7 +276,8 @@ class RPVMatcher():
                 pdgid,
                 info_dict['matched_parton_barcode'],
                 gluino_barcode,
-                neutralino_barcode if neutralino_barcode != -999 else -1
+                #neutralino_barcode if neutralino_barcode != -999 else -1
+                neutralino_barcode
                 )
 
     def __check_fsr_match_and_decorate_jet(self, jet, partons, info_dict):
