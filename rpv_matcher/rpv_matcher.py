@@ -153,6 +153,7 @@ class RPVMatcher():
         'ReturnOnlyMatched': False,
         'Debug': False,
         'DisableNmatchedJetProtection': False,
+        'MatchJetsToMatchedQuarks': False,
         'MatchFSRsFromMatchedGluinoDecays': False,
         'maxNmatchedJets': 6
         }
@@ -371,9 +372,9 @@ class RPVMatcher():
             # Loop over partons
             for parton_index, parton in enumerate(partons):
                 barcode = parton.get_barcode() if not is_fsr else parton.get_quark_barcode() # noqa
-                # Skip matched parton/FSR
-                if barcode in self.__matched_partons:
-                    properties = self.__properties
+                # Skip matched parton/FSR (unless requested not to with MatchJetsToMatchedQuarks property)
+                properties = self.__properties
+                if barcode in self.__matched_partons and not properties['MatchJetsToMatchedQuarks']:
                     if not is_fsr:
                         # Always skip matched last-quark in gluino decay chain
                         continue
